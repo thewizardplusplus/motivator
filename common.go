@@ -9,6 +9,10 @@ import (
 
 const appName = "motivator"
 
+type configurableCommand struct {
+	ConfigPath string `kong:"required,short='c',name='config',default='config.json',help='Config path.'"` // nolint: lll
+}
+
 func findBackgroundProcess(executableName string) (ps.Process, error) {
 	processes, err := ps.Processes()
 	if err != nil {
