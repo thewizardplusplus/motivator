@@ -8,6 +8,8 @@ import (
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/m1/gospin"
 )
 
 type config struct {
@@ -34,5 +36,12 @@ func main() {
 	// select a random phrase
 	phrase := config.Phrases[rand.Intn(len(config.Phrases))]
 
-	fmt.Println(phrase)
+	// process the Spintax format
+	spinner := gospin.New(nil)
+	spin, err := spinner.Spin(phrase)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(spin)
 }
