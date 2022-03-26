@@ -32,6 +32,9 @@ func main() {
 	if err := json.Unmarshal(configBytes, &config); err != nil {
 		log.Fatal(err)
 	}
+	if len(config.Phrases) == 0 {
+		log.Fatal("config has no phrases")
+	}
 
 	// select a random phrase
 	phrase := config.Phrases[rand.Intn(len(config.Phrases))]
