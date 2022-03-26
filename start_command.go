@@ -11,7 +11,7 @@ type startCommand struct {
 }
 
 func (command startCommand) Run() error {
-	if err := killBackgroundProcess("motivator"); err != nil {
+	if err := killBackgroundProcess(appName); err != nil {
 		return fmt.Errorf("unable to kill a previous background process: %w", err)
 	}
 

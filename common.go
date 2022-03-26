@@ -7,6 +7,8 @@ import (
 	ps "github.com/mitchellh/go-ps"
 )
 
+const appName = "motivator"
+
 func findBackgroundProcess(executableName string) (ps.Process, error) {
 	processes, err := ps.Processes()
 	if err != nil {

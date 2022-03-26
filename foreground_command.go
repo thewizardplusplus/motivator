@@ -53,7 +53,7 @@ func (command foregroundCommand) Run() error {
 		}
 
 		// show a notification
-		if err := beeep.Notify("motivator", spin, ""); err != nil {
+		if err := beeep.Notify(appName, spin, ""); err != nil {
 			log.Printf("unable to show a notification: %s", err)
 			return
 		}
