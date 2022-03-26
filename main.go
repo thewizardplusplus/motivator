@@ -11,6 +11,7 @@ import (
 
 type cli struct {
 	Foreground foregroundCommand `kong:"cmd,help='Start showing notifications in foreground.'"` // nolint: lll
+	Start      startCommand      `kong:"cmd,help='Start showing notifications in background.'"` // nolint: lll
 }
 
 func main() {
