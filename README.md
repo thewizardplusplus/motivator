@@ -11,6 +11,12 @@ The utility for repeatedly displaying notifications in the standard OS way.
 $ go install github.com/thewizardplusplus/motivator@latest
 ```
 
+## Config
+
+Format of the config in the JSON Schema format: [docs/config.schema.json](docs/config.schema.json).
+
+Example of the config: [config.json](config.json).
+
 ## License
 
 The MIT License (MIT)

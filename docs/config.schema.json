@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": ["cron", "phrases"],
+  "properties": {
+    "cron": {
+      "type": "string",
+      "description": "in the format of the `cron` specification"
+    },
+    "phrases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
