@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
+	"time"
 )
 
 type config struct {
@@ -13,9 +15,12 @@ type config struct {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	configPath := flag.String("config", "config.json", "")
 	flag.Parse()
 
+	// read a config
 	configBytes, err := ioutil.ReadFile(*configPath)
 	if err != nil {
 		log.Fatal(err)
@@ -26,5 +31,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(config)
+	// select a random phrase
+	phrase := config.Phrases[rand.Intn(len(config.Phrases))]
+
+	fmt.Println(phrase)
 }
