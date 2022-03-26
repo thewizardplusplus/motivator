@@ -3,12 +3,12 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"time"
 
+	"github.com/gen2brain/beeep"
 	"github.com/m1/gospin"
 )
 
@@ -43,5 +43,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(spin)
+	// show a notification
+	if err := beeep.Notify("motivator", spin, ""); err != nil {
+		log.Fatal(err)
+	}
 }
