@@ -1,4 +1,5 @@
 {
+  "cron": "*/5 * * * * *",
   "phrases": [
     "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}",
     "{Hello|Hey}{ world|}, how are you today?",

@@ -9,10 +9,12 @@ import (
 	"time"
 
 	"github.com/gen2brain/beeep"
+	"github.com/go-co-op/gocron"
 	"github.com/m1/gospin"
 )
 
 type config struct {
+	Cron    string
 	Phrases []string
 }
 
@@ -36,18 +38,28 @@ func main() {
 		log.Fatal("config has no phrases")
 	}
 
-	// select a random phrase
-	phrase := config.Phrases[rand.Intn(len(config.Phrases))]
+	// start a cron scheduler
+	scheduler := gocron.NewScheduler(time.UTC)
+	if _, err := scheduler.CronWithSeconds(config.Cron).Do(func() {
+		// select a random phrase
+		phrase := config.Phrases[rand.Intn(len(config.Phrases))]
 
-	// process the Spintax format
-	spinner := gospin.New(nil)
-	spin, err := spinner.Spin(phrase)
-	if err != nil {
+		// process the Spintax format
+		spinner := gospin.New(nil)
+		spin, err := spinner.Spin(phrase)
+		if err != nil {
+			log.Print(err)
+			return
+		}
+
+		// show a notification
+		if err := beeep.Notify("motivator", spin, ""); err != nil {
+			log.Print(err)
+			return
+		}
+	}); err != nil {
 		log.Fatal(err)
 	}
 
-	// show a notification
-	if err := beeep.Notify("motivator", spin, ""); err != nil {
-		log.Fatal(err)
-	}
+	scheduler.StartBlocking()
 }
