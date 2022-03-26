@@ -7,7 +7,7 @@ import (
 type statusCommand struct{}
 
 func (command statusCommand) Run() error {
-	backgroundProcess, err := findBackgroundProcess()
+	backgroundProcess, err := findBackgroundProcess("motivator")
 	if err != nil {
 		return fmt.Errorf("unable to find a background process: %w", err)
 	}
