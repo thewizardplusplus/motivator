@@ -13,6 +13,7 @@ type cli struct {
 	Foreground foregroundCommand `kong:"cmd,help='Start showing notifications in foreground.'"`             // nolint: lll
 	Start      startCommand      `kong:"cmd,help='Start showing notifications in background.'"`             // nolint: lll
 	Status     statusCommand     `kong:"cmd,help='Check that notifications are being show in background.'"` // nolint: lll
+	Stop       stopCommand       `kong:"cmd,help='Stop showing notifications in background.'"`              // nolint: lll
 }
 
 func main() {
