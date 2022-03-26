@@ -7,7 +7,10 @@ import (
 	ps "github.com/mitchellh/go-ps"
 )
 
-const appName = "motivator"
+const (
+	appName            = "motivator"
+	markOfShowingStart = "start showing notifications"
+)
 
 type configurableCommand struct {
 	ConfigPath string `kong:"required,short='c',name='config',default='config.json',help='Config path.'"` // nolint: lll

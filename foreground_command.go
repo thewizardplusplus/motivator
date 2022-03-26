@@ -61,6 +61,8 @@ func (command foregroundCommand) Run() error {
 		return fmt.Errorf("unable to start a cron scheduler: %w", err)
 	}
 
+	log.Print(markOfShowingStart)
 	scheduler.StartBlocking()
+
 	return nil
 }
