@@ -1,10 +1,13 @@
 {
+  "icon": "assets/power_fist.png",
   "tasks": [
     {
       "name": "Greetings",
+      "icon": "assets/tube_only_please.png",
       "cron": "*/5 * * * * *",
       "phrases": [
         {
+          "icon": "assets/no_transistor.png",
           "text": "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}"
         },
         {
