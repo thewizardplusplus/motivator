@@ -15,6 +15,7 @@ import (
 )
 
 type task struct {
+	Name    string
 	Cron    string
 	Phrases []string
 }
@@ -38,10 +39,22 @@ func (command foregroundCommand) Run() error {
 	}
 
 	var filteredConfig config
-	for _, task := range loadedConfig {
-		if len(task.Phrases) != 0 {
-			filteredConfig = append(filteredConfig, task)
+	taskNames := make(map[string]int)
+	for index, task := range loadedConfig {
+		if len(task.Phrases) == 0 {
+			continue
 		}
+
+		if task.Name == "" {
+			task.Name = fmt.Sprintf("Task #%d", index+1)
+		}
+
+		taskNames[task.Name]++
+		if count := taskNames[task.Name]; count > 1 {
+			task.Name = fmt.Sprintf("%s #%d", task.Name, count)
+		}
+
+		filteredConfig = append(filteredConfig, task)
 	}
 	if len(filteredConfig) == 0 {
 		return errors.New("there is not at least one task with phrases in the config")
@@ -49,7 +62,7 @@ func (command foregroundCommand) Run() error {
 
 	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
-	for index, task := range filteredConfig {
+	for _, task := range filteredConfig {
 		taskCopy := task
 		if _, err := scheduler.CronWithSeconds(task.Cron).Do(func() {
 			// select a random phrase
@@ -64,12 +77,17 @@ func (command foregroundCommand) Run() error {
 			}
 
 			// show a notification
-			if err := beeep.Notify(appName, spin, ""); err != nil {
+			title := fmt.Sprintf("%s | %s", appName, taskCopy.Name)
+			if err := beeep.Notify(title, spin, ""); err != nil {
 				log.Printf("unable to show a notification: %s", err)
 				return
 			}
 		}); err != nil {
-			log.Printf("unable to start a cron scheduler for task #%d: %s", index, err)
+			log.Printf(
+				"unable to start a cron scheduler for task %q: %s",
+				taskCopy.Name,
+				err,
+			)
 		}
 	}
 
