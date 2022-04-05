@@ -90,6 +90,9 @@ func (command foregroundCommand) Run() error {
 			)
 		}
 	}
+	if len(scheduler.Jobs()) == 0 {
+		return errors.New("unable to start a cron scheduler for at least one task")
+	}
 
 	log.Print(markOfShowingStart)
 	scheduler.StartBlocking()
