@@ -1,17 +1,25 @@
-[
-  {
-    "name": "Greetings",
-    "cron": "*/5 * * * * *",
-    "phrases": [
-      "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}",
-      "{Hello|Hey}{ world|}, how are you today?"
-    ]
-  },
-  {
-    "name": "Pangrams",
-    "cron": "*/10 * * * * *",
-    "phrases": [
-      "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
-    ]
-  }
-]
+{
+  "tasks": [
+    {
+      "name": "Greetings",
+      "cron": "*/5 * * * * *",
+      "phrases": [
+        {
+          "text": "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}"
+        },
+        {
+          "text": "{Hello|Hey}{ world|}, how are you today?"
+        }
+      ]
+    },
+    {
+      "name": "Pangrams",
+      "cron": "*/10 * * * * *",
+      "phrases": [
+        {
+          "text": "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
+        }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"path/filepath"
 	"time"
 
 	"github.com/gen2brain/beeep"
@@ -14,13 +15,22 @@ import (
 	"github.com/m1/gospin"
 )
 
-type task struct {
-	Name    string
-	Cron    string
-	Phrases []string
+type phrase struct {
+	Icon string
+	Text string
 }
 
-type config []task
+type task struct {
+	Name    string
+	Icon    string
+	Cron    string
+	Phrases []phrase
+}
+
+type config struct {
+	Icon  string
+	Tasks []task
+}
 
 type foregroundCommand struct {
 	configurableCommand
@@ -33,20 +43,21 @@ func (command foregroundCommand) Run() error {
 		return fmt.Errorf("unable to read a config: %w", err)
 	}
 
-	var loadedConfig config
-	if err := json.Unmarshal(configBytes, &loadedConfig); err != nil {
+	var config config
+	if err := json.Unmarshal(configBytes, &config); err != nil {
 		return fmt.Errorf("unable to unmarshal a config: %w", err)
 	}
 
-	var filteredConfig config
+	var tasks []task
 	taskNames := make(map[string]int)
-	for index, task := range loadedConfig {
+	configDirectory := filepath.Dir(command.ConfigPath)
+	for taskIndex, task := range config.Tasks {
 		if len(task.Phrases) == 0 {
 			continue
 		}
 
 		if task.Name == "" {
-			task.Name = fmt.Sprintf("Task #%d", index+1)
+			task.Name = fmt.Sprintf("Task #%d", taskIndex+1)
 		}
 
 		taskNames[task.Name]++
@@ -54,15 +65,30 @@ func (command foregroundCommand) Run() error {
 			task.Name = fmt.Sprintf("%s #%d", task.Name, count)
 		}
 
-		filteredConfig = append(filteredConfig, task)
+		alternativeIconPath := task.Icon
+		if alternativeIconPath == "" {
+			alternativeIconPath = config.Icon
+		}
+		for phraseIndex, phrase := range task.Phrases {
+			iconPath := phrase.Icon
+			if iconPath == "" {
+				iconPath = alternativeIconPath
+			}
+			if iconPath != "" && !filepath.IsAbs(iconPath) {
+				iconPath = filepath.Join(configDirectory, iconPath)
+			}
+			task.Phrases[phraseIndex].Icon = iconPath
+		}
+
+		tasks = append(tasks, task)
 	}
-	if len(filteredConfig) == 0 {
+	if len(tasks) == 0 {
 		return errors.New("there is not at least one task with phrases in the config")
 	}
 
 	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
-	for _, task := range filteredConfig {
+	for _, task := range tasks {
 		taskCopy := task
 		if _, err := scheduler.CronWithSeconds(task.Cron).Do(func() {
 			// select a random phrase
@@ -70,7 +96,7 @@ func (command foregroundCommand) Run() error {
 
 			// process the Spintax format
 			spinner := gospin.New(nil)
-			spin, err := spinner.Spin(phrase)
+			spin, err := spinner.Spin(phrase.Text)
 			if err != nil {
 				log.Printf("unable to process the Spintax format: %s", err)
 				return
@@ -78,7 +104,7 @@ func (command foregroundCommand) Run() error {
 
 			// show a notification
 			title := fmt.Sprintf("%s | %s", appName, taskCopy.Name)
-			if err := beeep.Notify(title, spin, ""); err != nil {
+			if err := beeep.Notify(title, spin, phrase.Icon); err != nil {
 				log.Printf("unable to show a notification: %s", err)
 				return
 			}
