@@ -14,7 +14,7 @@ type startCommand struct {
 
 func (command startCommand) Run() error {
 	if err := killBackgroundProcess(appName); err != nil {
-		return fmt.Errorf("unable to kill a previous background process: %w", err)
+		return fmt.Errorf("unable to kill a background process: %w", err)
 	}
 
 	// run a second instance of itself in background
