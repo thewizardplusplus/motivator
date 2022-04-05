@@ -1,8 +1,15 @@
-{
-  "cron": "*/5 * * * * *",
-  "phrases": [
-    "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}",
-    "{Hello|Hey}{ world|}, how are you today?",
-    "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
-  ]
-}
+[
+  {
+    "cron": "*/5 * * * * *",
+    "phrases": [
+      "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}",
+      "{Hello|Hey}{ world|}, how are you today?"
+    ]
+  },
+  {
+    "cron": "*/10 * * * * *",
+    "phrases": [
+      "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
+    ]
+  }
+]

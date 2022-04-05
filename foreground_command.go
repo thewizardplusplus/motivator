@@ -14,10 +14,12 @@ import (
 	"github.com/m1/gospin"
 )
 
-type config struct {
+type task struct {
 	Cron    string
 	Phrases []string
 }
+
+type config []task
 
 type foregroundCommand struct {
 	configurableCommand
@@ -30,35 +32,45 @@ func (command foregroundCommand) Run() error {
 		return fmt.Errorf("unable to read a config: %w", err)
 	}
 
-	var config config
-	if err := json.Unmarshal(configBytes, &config); err != nil {
+	var loadedConfig config
+	if err := json.Unmarshal(configBytes, &loadedConfig); err != nil {
 		return fmt.Errorf("unable to unmarshal a config: %w", err)
 	}
-	if len(config.Phrases) == 0 {
-		return errors.New("config has no phrases")
+
+	var filteredConfig config
+	for _, task := range loadedConfig {
+		if len(task.Phrases) != 0 {
+			filteredConfig = append(filteredConfig, task)
+		}
+	}
+	if len(filteredConfig) == 0 {
+		return errors.New("there is not at least one task with phrases in the config")
 	}
 
 	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
-	if _, err := scheduler.CronWithSeconds(config.Cron).Do(func() {
-		// select a random phrase
-		phrase := config.Phrases[rand.Intn(len(config.Phrases))]
+	for index, task := range filteredConfig {
+		taskCopy := task
+		if _, err := scheduler.CronWithSeconds(task.Cron).Do(func() {
+			// select a random phrase
+			phrase := taskCopy.Phrases[rand.Intn(len(taskCopy.Phrases))]
 
-		// process the Spintax format
-		spinner := gospin.New(nil)
-		spin, err := spinner.Spin(phrase)
-		if err != nil {
-			log.Printf("unable to process the Spintax format: %s", err)
-			return
-		}
+			// process the Spintax format
+			spinner := gospin.New(nil)
+			spin, err := spinner.Spin(phrase)
+			if err != nil {
+				log.Printf("unable to process the Spintax format: %s", err)
+				return
+			}
 
-		// show a notification
-		if err := beeep.Notify(appName, spin, ""); err != nil {
-			log.Printf("unable to show a notification: %s", err)
-			return
+			// show a notification
+			if err := beeep.Notify(appName, spin, ""); err != nil {
+				log.Printf("unable to show a notification: %s", err)
+				return
+			}
+		}); err != nil {
+			log.Printf("unable to start a cron scheduler for task #%d: %s", index, err)
 		}
-	}); err != nil {
-		return fmt.Errorf("unable to start a cron scheduler: %w", err)
 	}
 
 	log.Print(markOfShowingStart)
