@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -28,8 +29,9 @@ type task struct {
 }
 
 type config struct {
-	Icon  string
-	Tasks []task
+	Icon      string
+	Tasks     []task
+	Variables map[string]string
 }
 
 type foregroundCommand struct {
@@ -78,6 +80,11 @@ func (command foregroundCommand) Run() error {
 				iconPath = filepath.Join(configDirectory, iconPath)
 			}
 			task.Phrases[phraseIndex].Icon = iconPath
+
+			task.Phrases[phraseIndex].Text =
+				os.Expand(phrase.Text, func(name string) string {
+					return config.Variables[name]
+				})
 		}
 
 		tasks = append(tasks, task)

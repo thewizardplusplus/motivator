@@ -8,10 +8,10 @@
       "phrases": [
         {
           "icon": "assets/no_transistor.png",
-          "text": "{Hello|Hey} world, {hope {you're|you are} {okay|good}|have a nice day}"
+          "text": "$GREETING $SUBJECT, {hope {you're|you are} {okay|good}|have a nice day}"
         },
         {
-          "text": "{Hello|Hey}{ world|}, how are you today?"
+          "text": "$GREETING{ $SUBJECT|}, how are you today?"
         }
       ]
     },
@@ -24,5 +24,9 @@
         }
       ]
     }
-  ]
+  ],
+  "variables": {
+    "GREETING": "{Hello|Hey}",
+    "SUBJECT": "world"
+  }
 }
