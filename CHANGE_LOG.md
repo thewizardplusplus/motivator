@@ -1,6 +1,27 @@
 # Change Log
 
+## [v1.2.0](https://github.com/thewizardplusplus/motivator/tree/v1.2.0) (2022-04-05)
+
+Support for several different tasks for displaying notifications; support for displaying an icon for each notification; support for variable substitution in notifications.
+
+- support for several different tasks for displaying notifications:
+  - for each task:
+    - support for displaying a task name:
+      - automatic generation of a task name, if it was not specified;
+      - add a sequential number to duplicated task names;
+    - support for displaying an icon for each notification:
+      - an icon can be specified for:
+        - a notification;
+        - a task;
+        - the entire config;
+      - for each notification, the first specified icon is selected in the order above;
+- support for variable substitution in notifications:
+  - use the format of the [`os.Expand()`](https://pkg.go.dev/os@go1.18#Expand) function;
+  - use one common list of variables to substitute in all notifications of all tasks.
+
 ## [v1.1.0](https://github.com/thewizardplusplus/motivator/tree/v1.1.0) (2022-04-05)
+
+Built-in support for running in the background.
 
 - built-in support for running in the background:
   - the console command for starting and restarting;
