@@ -7,10 +7,24 @@ The utility for repeatedly displaying notifications in the standard OS way.
 
 ## Features
 
-- use the [cron](https://en.wikipedia.org/wiki/Cron) specification for displaying notifications on a schedule:
-  - support for seconds in the [cron](https://en.wikipedia.org/wiki/Cron) specification;
-- random selection of a notification for displaying;
-- support for the [Spintax](https://postmaker.io/blog/spintax-guide/) format in notifications;
+- support for several different tasks for displaying notifications:
+  - for each task:
+    - support for displaying a task name:
+      - automatic generation of a task name, if it was not specified;
+      - add a sequential number to duplicated task names;
+    - support for displaying an icon for each notification:
+      - an icon can be specified for:
+        - a notification;
+        - a task;
+        - the entire config;
+      - for each notification, the first specified icon is selected in the order above;
+    - use the [cron](https://en.wikipedia.org/wiki/Cron) specification for displaying notifications on a schedule:
+      - support for seconds in the [cron](https://en.wikipedia.org/wiki/Cron) specification;
+    - random selection of a notification for displaying;
+    - support for the [Spintax](https://postmaker.io/blog/spintax-guide/) format in notifications;
+- support for variable substitution in notifications:
+  - use the format of the [`os.Expand()`](https://pkg.go.dev/os@go1.18#Expand) function;
+  - use one common list of variables to substitute in all notifications of all tasks;
 - built-in support for running in the background:
   - the console command for starting and restarting;
   - the console command for stopping;
