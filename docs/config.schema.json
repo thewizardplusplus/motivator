@@ -1,16 +1,55 @@
 {
   "type": "object",
-  "required": ["cron", "phrases"],
+  "required": ["tasks"],
   "properties": {
-    "cron": {
+    "icon": {
       "type": "string",
-      "description": "in the format of the `cron` specification"
+      "description": "the path to the icon file"
     },
-    "phrases": {
+    "tasks": {
       "type": "array",
       "minItems": 1,
       "items": {
-        "type": "string"
+        "type": "object",
+        "required": ["cron", "phrases"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string",
+            "description": "the path to the icon file"
+          },
+          "cron": {
+            "type": "string",
+            "description": "in the format of the `cron` specification"
+          },
+          "phrases": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "properties": {
+                "icon": {
+                  "type": "string",
+                  "description": "the path to the icon file"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "variables": {
+      "type": "object",
+      "patternProperties": {
+        "[A-Za-z0-9_]": {
+          "type": "string"
+        }
       }
     }
   }
