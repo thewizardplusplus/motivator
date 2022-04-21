@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gen2brain/beeep"
@@ -33,6 +34,7 @@ type config struct {
 	Icon                string
 	Tasks               []task
 	Variables           map[string]string
+	HideAppName         bool
 	UseOriginalTaskName bool
 }
 
@@ -120,7 +122,14 @@ func (command foregroundCommand) Run() error {
 			} else {
 				taskName = taskCopy.Name
 			}
-			title := fmt.Sprintf("%s | %s", appName, taskName)
+			var titleParts []string
+			if !config.HideAppName {
+				titleParts = append(titleParts, appName)
+			}
+			if taskName != "" {
+				titleParts = append(titleParts, taskName)
+			}
+			title := strings.Join(titleParts, " | ")
 			if err := beeep.Notify(title, spin, phrase.Icon); err != nil {
 				log.Printf("unable to show a notification: %s", err)
 				return

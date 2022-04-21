@@ -29,5 +29,6 @@
     "GREETING": "{Hello|Hey}",
     "SUBJECT": "world"
   },
+  "hideAppName": false,
   "useOriginalTaskName": false
 }
