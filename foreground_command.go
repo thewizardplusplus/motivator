@@ -22,16 +22,18 @@ type phrase struct {
 }
 
 type task struct {
-	Name    string
-	Icon    string
-	Cron    string
-	Phrases []phrase
+	Name         string
+	OriginalName string `json:"-"`
+	Icon         string
+	Cron         string
+	Phrases      []phrase
 }
 
 type config struct {
-	Icon      string
-	Tasks     []task
-	Variables map[string]string
+	Icon                string
+	Tasks               []task
+	Variables           map[string]string
+	UseOriginalTaskName bool
 }
 
 type foregroundCommand struct {
@@ -57,6 +59,8 @@ func (command foregroundCommand) Run() error {
 		if len(task.Phrases) == 0 {
 			continue
 		}
+
+		task.OriginalName = task.Name
 
 		if task.Name == "" {
 			task.Name = fmt.Sprintf("Task #%d", taskIndex+1)
@@ -110,7 +114,13 @@ func (command foregroundCommand) Run() error {
 			}
 
 			// show a notification
-			title := fmt.Sprintf("%s | %s", appName, taskCopy.Name)
+			var taskName string
+			if config.UseOriginalTaskName {
+				taskName = taskCopy.OriginalName
+			} else {
+				taskName = taskCopy.Name
+			}
+			title := fmt.Sprintf("%s | %s", appName, taskName)
 			if err := beeep.Notify(title, spin, phrase.Icon); err != nil {
 				log.Printf("unable to show a notification: %s", err)
 				return

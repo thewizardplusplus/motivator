@@ -28,5 +28,6 @@
   "variables": {
     "GREETING": "{Hello|Hey}",
     "SUBJECT": "world"
-  }
+  },
+  "useOriginalTaskName": false
 }
