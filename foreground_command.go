@@ -102,8 +102,14 @@ func (command foregroundCommand) Run() error {
 	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
 	for _, task := range tasks {
+		var cronParser func(cronExpression string) *gocron.Scheduler
+		if fields := strings.Fields(task.Cron); len(fields) == 6 {
+			cronParser = scheduler.CronWithSeconds
+		} else {
+			cronParser = scheduler.Cron
+		}
 		taskCopy := task
-		if _, err := scheduler.CronWithSeconds(task.Cron).Do(func() {
+		if _, err := cronParser(task.Cron).Do(func() {
 			// select a random phrase
 			phrase := taskCopy.Phrases[rand.Intn(len(taskCopy.Phrases))]
 
