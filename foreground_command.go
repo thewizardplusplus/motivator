@@ -27,6 +27,7 @@ type task struct {
 	OriginalName string `json:"-"`
 	Icon         string
 	Cron         string
+	Delay        string
 	Phrases      []phrase
 }
 
@@ -102,14 +103,25 @@ func (command foregroundCommand) Run() error {
 	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
 	for _, task := range tasks {
-		var cronParser func(cronExpression string) *gocron.Scheduler
-		if fields := strings.Fields(task.Cron); len(fields) == 6 {
-			cronParser = scheduler.CronWithSeconds
+		var jobPlanner func(jobHandler interface{}, parameters ...interface{}) (
+			*gocron.Job,
+			error,
+		)
+		if task.Cron != "" {
+			var cronParser func(cronExpression string) *gocron.Scheduler
+			if fields := strings.Fields(task.Cron); len(fields) == 6 {
+				cronParser = scheduler.CronWithSeconds
+			} else {
+				cronParser = scheduler.Cron
+			}
+
+			jobPlanner = cronParser(task.Cron).Do
 		} else {
-			cronParser = scheduler.Cron
+			jobPlanner = scheduler.Every(task.Delay).Do
 		}
+
 		taskCopy := task
-		if _, err := cronParser(task.Cron).Do(func() {
+		if _, err := jobPlanner(func() {
 			// select a random phrase
 			phrase := taskCopy.Phrases[rand.Intn(len(taskCopy.Phrases))]
 

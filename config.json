@@ -16,20 +16,20 @@
       ]
     },
     {
-      "name": "Pangrams",
-      "cron": "*/10 * * * * *",
-      "phrases": [
-        {
-          "text": "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
-        }
-      ]
-    },
-    {
       "name": "Rare Notifications",
       "cron": "* * * * *",
       "phrases": [
         {
           "text": "Rare notification"
+        }
+      ]
+    },
+    {
+      "name": "Pangrams",
+      "delay": "10s",
+      "phrases": [
+        {
+          "text": "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
         }
       ]
     }
