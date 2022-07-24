@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	ps "github.com/mitchellh/go-ps"
+	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 const (
@@ -16,28 +16,10 @@ type configurableCommand struct {
 	ConfigPath string `kong:"required,short='c',name='config',default='config.json',help='Config path.'"` // nolint: lll
 }
 
-func findBackgroundProcess(executableName string) (ps.Process, error) {
-	processes, err := ps.Processes()
-	if err != nil {
-		return nil, fmt.Errorf("unable to get a process list: %w", err)
-	}
-
-	var backgroundProcess ps.Process
-	currentPID := os.Getpid()
-	for _, process := range processes {
-		if process.Executable() == executableName && process.Pid() != currentPID {
-			backgroundProcess = process
-			break
-		}
-	}
-
-	return backgroundProcess, nil
-}
-
 func killBackgroundProcess(executableName string) error {
-	backgroundProcess, err := findBackgroundProcess(executableName)
+	backgroundProcess, err := systemutils.FindBackgroundProcess(executableName)
 	if err != nil {
-		return fmt.Errorf("unable to find a background process: %w", err)
+		return fmt.Errorf("unable to find the background process: %w", err)
 	}
 	if backgroundProcess == nil {
 		return nil
