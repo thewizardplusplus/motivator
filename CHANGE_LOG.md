@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.2.1](https://github.com/thewizardplusplus/motivator/tree/v1.2.1) (2022-07-24)
+
+- use for displaying notifications on a schedule:
+  - a delay relative to the last displaying:
+    - use the format of the [`time.ParseDuration()`](https://pkg.go.dev/time@go1.18#ParseDuration) function;
+- make optional:
+  - automatic generation of a task name, if it was not specified;
+  - add a sequential number to duplicated task names;
+  - support for seconds in the [cron](https://en.wikipedia.org/wiki/Cron) specification;
+- support for hiding the app name.
+
 ## [v1.2.0](https://github.com/thewizardplusplus/motivator/tree/v1.2.0) (2022-04-05)
 
 Support for several different tasks for displaying notifications; support for displaying an icon for each notification; support for variable substitution in notifications.
@@ -17,7 +28,8 @@ Support for several different tasks for displaying notifications; support for di
       - for each notification, the first specified icon is selected in the order above;
 - support for variable substitution in notifications:
   - use the format of the [`os.Expand()`](https://pkg.go.dev/os@go1.18#Expand) function;
-  - use one common list of variables to substitute in all notifications of all tasks.
+  - use one common list of variables to substitute in all notifications of all tasks;
+- select the app icon (![](docs/logo/logo.png)).
 
 ## [v1.1.0](https://github.com/thewizardplusplus/motivator/tree/v1.1.0) (2022-04-05)
 
