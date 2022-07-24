@@ -10,16 +10,19 @@ The utility for repeatedly displaying notifications in the standard OS way.
 - support for several different tasks for displaying notifications:
   - for each task:
     - support for displaying a task name:
-      - automatic generation of a task name, if it was not specified;
-      - add a sequential number to duplicated task names;
+      - automatic generation of a task name, if it was not specified (optionally);
+      - add a sequential number to duplicated task names (optionally);
     - support for displaying an icon for each notification:
       - an icon can be specified for:
         - a notification;
         - a task;
         - the entire config;
       - for each notification, the first specified icon is selected in the order above;
-    - use the [cron](https://en.wikipedia.org/wiki/Cron) specification for displaying notifications on a schedule:
-      - support for seconds in the [cron](https://en.wikipedia.org/wiki/Cron) specification;
+    - use for displaying notifications on a schedule:
+      - the [cron](https://en.wikipedia.org/wiki/Cron) specification:
+        - support for seconds in the [cron](https://en.wikipedia.org/wiki/Cron) specification (optionally);
+      - a delay relative to the last displaying:
+        - use the format of the [`time.ParseDuration()`](https://pkg.go.dev/time@go1.18#ParseDuration) function;
     - random selection of a notification for displaying;
     - support for the [Spintax](https://postmaker.io/blog/spintax-guide/) format in notifications;
 - support for variable substitution in notifications:
