@@ -12,7 +12,7 @@ type startCommand struct {
 }
 
 func (command startCommand) Run() error {
-	if err := systemutils.KillBackgroundProcess(appName); err != nil {
+	if err := systemutils.KillBackgroundProcess(appName, os.Getpid()); err != nil {
 		return fmt.Errorf("unable to kill the background process: %w", err)
 	}
 

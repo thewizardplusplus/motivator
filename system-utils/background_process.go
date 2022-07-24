@@ -11,16 +11,19 @@ import (
 	ps "github.com/mitchellh/go-ps"
 )
 
-func FindBackgroundProcess(executableName string) (ps.Process, error) {
+func FindBackgroundProcess(
+	executableName string,
+	foregroundProcessPID int,
+) (ps.Process, error) {
 	processes, err := ps.Processes()
 	if err != nil {
 		return nil, fmt.Errorf("unable to get the process list: %w", err)
 	}
 
 	var backgroundProcess ps.Process
-	currentPID := os.Getpid()
 	for _, process := range processes {
-		if process.Executable() == executableName && process.Pid() != currentPID {
+		if process.Executable() == executableName &&
+			process.Pid() != foregroundProcessPID {
 			backgroundProcess = process
 			break
 		}
@@ -68,8 +71,12 @@ func StartBackgroundProcess(
 	return nil
 }
 
-func KillBackgroundProcess(executableName string) error {
-	backgroundProcess, err := FindBackgroundProcess(executableName)
+func KillBackgroundProcess(
+	executableName string,
+	foregroundProcessPID int,
+) error {
+	backgroundProcess, err :=
+		FindBackgroundProcess(executableName, foregroundProcessPID)
 	if err != nil {
 		return fmt.Errorf("unable to find the background process by name: %w", err)
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
@@ -9,7 +10,8 @@ import (
 type statusCommand struct{}
 
 func (command statusCommand) Run() error {
-	backgroundProcess, err := systemutils.FindBackgroundProcess(appName)
+	backgroundProcess, err :=
+		systemutils.FindBackgroundProcess(appName, os.Getpid())
 	if err != nil {
 		return fmt.Errorf("unable to find the background process: %w", err)
 	}
