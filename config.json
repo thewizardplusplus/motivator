@@ -32,6 +32,16 @@
           "text": "The {slow|quick} {fox|deer} {gracefully |}jumps over the {sleeping|lazy} dog"
         }
       ]
+    },
+    {
+      "name": "",
+      "useOriginalName": true,
+      "delay": "10s",
+      "phrases": [
+        {
+          "text": "The notification with an empty task name"
+        }
+      ]
     }
   ],
   "variables": {

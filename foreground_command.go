@@ -23,12 +23,13 @@ type phrase struct {
 }
 
 type task struct {
-	Name         string
-	OriginalName string `json:"-"`
-	Icon         string
-	Cron         string
-	Delay        string
-	Phrases      []phrase
+	Name            string
+	OriginalName    string `json:"-"`
+	UseOriginalName bool
+	Icon            string
+	Cron            string
+	Delay           string
+	Phrases         []phrase
 }
 
 type config struct {
@@ -135,7 +136,7 @@ func (command foregroundCommand) Run() error {
 
 			// show a notification
 			var taskName string
-			if config.UseOriginalTaskName {
+			if taskCopy.UseOriginalName || config.UseOriginalTaskName {
 				taskName = taskCopy.OriginalName
 			} else {
 				taskName = taskCopy.Name
