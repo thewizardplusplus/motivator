@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type startCommand struct {
@@ -13,8 +15,8 @@ type startCommand struct {
 }
 
 func (command startCommand) Run() error {
-	if err := killBackgroundProcess(appName); err != nil {
-		return fmt.Errorf("unable to kill a background process: %w", err)
+	if err := systemutils.KillBackgroundProcess(appName); err != nil {
+		return fmt.Errorf("unable to kill the background process: %w", err)
 	}
 
 	// run a second instance of itself in background
