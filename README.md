@@ -62,7 +62,7 @@ Options:
 
 Format of the config in the JSON Schema format: [docs/config.schema.json](docs/config.schema.json).
 
-Example of the config: [config.json](config.json).
+Example of the config: [docs/config.example.json](docs/config.example.json).
 
 ## License
 
