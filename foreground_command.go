@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
@@ -15,6 +13,7 @@ import (
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
 	"github.com/m1/gospin"
+	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type phrase struct {
@@ -45,15 +44,12 @@ type foregroundCommand struct {
 }
 
 func (command foregroundCommand) Run() error {
-	// read a config
-	configBytes, err := ioutil.ReadFile(command.ConfigPath)
-	if err != nil {
-		return fmt.Errorf("unable to read a config: %w", err)
-	}
-
 	var config config
-	if err := json.Unmarshal(configBytes, &config); err != nil {
-		return fmt.Errorf("unable to unmarshal a config: %w", err)
+	if err := systemutils.UnmarshalJSONFile(
+		command.ConfigPath,
+		&config,
+	); err != nil {
+		return fmt.Errorf("unable to load the config: %w", err)
 	}
 
 	var tasks []task
