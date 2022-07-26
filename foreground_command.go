@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"path/filepath"
 	"strings"
 	"time"
@@ -101,7 +100,7 @@ func (command foregroundCommand) Run() error {
 		taskCopy := task
 		if _, err := jobPlanner(func() {
 			// select a random phrase
-			phrase := taskCopy.Phrases[rand.Intn(len(taskCopy.Phrases))]
+			phrase := taskCopy.RandomPhrase()
 
 			// process the Spintax format
 			spunText, err := phrase.SpinText()
