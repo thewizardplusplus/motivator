@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -81,10 +80,7 @@ func (command foregroundCommand) Run() error {
 			}
 			task.Phrases[phraseIndex].Icon = iconPath
 
-			task.Phrases[phraseIndex].Text =
-				os.Expand(phrase.Text, func(name string) string {
-					return config.Variables[name]
-				})
+			task.Phrases[phraseIndex].Text = phrase.ExpandText(config.Variables)
 		}
 
 		tasks = append(tasks, task)
