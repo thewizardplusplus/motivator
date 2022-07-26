@@ -13,13 +13,9 @@ import (
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
 	"github.com/m1/gospin"
+	"github.com/thewizardplusplus/motivator/entities"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
-
-type phrase struct {
-	Icon string
-	Text string
-}
 
 type task struct {
 	Name            string
@@ -28,7 +24,7 @@ type task struct {
 	Icon            string
 	Cron            string
 	Delay           string
-	Phrases         []phrase
+	Phrases         []entities.Phrase
 }
 
 type config struct {
