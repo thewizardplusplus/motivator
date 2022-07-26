@@ -80,27 +80,9 @@ func (command foregroundCommand) Run() error {
 	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
 	for _, task := range tasks {
-		var jobPlanner func(jobHandler interface{}, parameters ...interface{}) (
-			*gocron.Job,
-			error,
-		)
-		if task.Cron != "" {
-			var cronParser func(cronExpression string) *gocron.Scheduler
-			if fields := strings.Fields(task.Cron); len(fields) == 6 {
-				cronParser = scheduler.CronWithSeconds
-			} else {
-				cronParser = scheduler.Cron
-			}
-
-			jobPlanner = cronParser(task.Cron).Do
-		} else {
-			jobPlanner = scheduler.Every(task.Delay).Do
-		}
-
-		taskCopy := task
-		if _, err := jobPlanner(func() {
+		if _, err := task.PlanJob(scheduler, func(task entities.Task) {
 			// select a random phrase
-			phrase := taskCopy.RandomPhrase()
+			phrase := task.RandomPhrase()
 
 			// process the Spintax format
 			spunText, err := phrase.SpinText()
@@ -111,10 +93,10 @@ func (command foregroundCommand) Run() error {
 
 			// show a notification
 			var taskName string
-			if taskCopy.UseOriginalName || config.UseOriginalTaskName {
-				taskName = taskCopy.OriginalName
+			if task.UseOriginalName || config.UseOriginalTaskName {
+				taskName = task.OriginalName
 			} else {
-				taskName = taskCopy.Name
+				taskName = task.Name
 			}
 			var titleParts []string
 			if !config.HideAppName {
@@ -129,15 +111,12 @@ func (command foregroundCommand) Run() error {
 				return
 			}
 		}); err != nil {
-			log.Printf(
-				"unable to start a cron scheduler for task %q: %s",
-				taskCopy.Name,
-				err,
-			)
+			const message = "unable to start the job scheduler for task %q: %s"
+			log.Printf(message, task.Name, err)
 		}
 	}
 	if len(scheduler.Jobs()) == 0 {
-		return errors.New("unable to start a cron scheduler for at least one task")
+		return errors.New("unable to start the job scheduler for at least one task")
 	}
 
 	log.Print(markOfShowingStart)
