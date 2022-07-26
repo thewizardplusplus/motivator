@@ -15,19 +15,9 @@ import (
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
-type task struct {
-	Name            string
-	OriginalName    string `json:"-"`
-	UseOriginalName bool
-	Icon            string
-	Cron            string
-	Delay           string
-	Phrases         []entities.Phrase
-}
-
 type config struct {
 	Icon                string
-	Tasks               []task
+	Tasks               []entities.Task
 	Variables           map[string]string
 	HideAppName         bool
 	UseOriginalTaskName bool
@@ -46,7 +36,7 @@ func (command foregroundCommand) Run() error {
 		return fmt.Errorf("unable to load the config: %w", err)
 	}
 
-	var tasks []task
+	var tasks []entities.Task
 	taskNames := make(map[string]int)
 	configDirectory := filepath.Dir(command.ConfigPath)
 	for taskIndex, task := range config.Tasks {
