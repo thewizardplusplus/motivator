@@ -11,7 +11,6 @@ import (
 
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
-	"github.com/m1/gospin"
 	"github.com/thewizardplusplus/motivator/entities"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
@@ -115,8 +114,7 @@ func (command foregroundCommand) Run() error {
 			phrase := taskCopy.Phrases[rand.Intn(len(taskCopy.Phrases))]
 
 			// process the Spintax format
-			spinner := gospin.New(nil)
-			spin, err := spinner.Spin(phrase.Text)
+			spunText, err := phrase.SpinText()
 			if err != nil {
 				log.Printf("unable to process the Spintax format: %s", err)
 				return
@@ -137,7 +135,7 @@ func (command foregroundCommand) Run() error {
 				titleParts = append(titleParts, taskName)
 			}
 			title := strings.Join(titleParts, " | ")
-			if err := beeep.Notify(title, spin, phrase.Icon); err != nil {
+			if err := beeep.Notify(title, spunText, phrase.Icon); err != nil {
 				log.Printf("unable to show a notification: %s", err)
 				return
 			}
