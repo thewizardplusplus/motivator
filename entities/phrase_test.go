@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -61,6 +62,48 @@ func TestPhrase_ExpandText(test *testing.T) {
 			got := phrase.ExpandText(data.args.variables)
 
 			assert.Equal(test, data.want, got)
+		})
+	}
+}
+
+func TestPhrase_SpinText(test *testing.T) {
+	type fields struct {
+		Text string
+	}
+
+	for _, data := range []struct {
+		name    string
+		fields  fields
+		want    string
+		wantErr assert.ErrorAssertionFunc
+	}{
+		{
+			name: "success",
+			fields: fields{
+				Text: "test {one|two|three}",
+			},
+			want:    "test three",
+			wantErr: assert.NoError,
+		},
+		{
+			name: "error",
+			fields: fields{
+				Text: "test one|two|three}",
+			},
+			want:    "",
+			wantErr: assert.Error,
+		},
+	} {
+		test.Run(data.name, func(test *testing.T) {
+			rand.Seed(1) // for the reproducibility of the test
+
+			phrase := Phrase{
+				Text: data.fields.Text,
+			}
+			got, err := phrase.SpinText()
+
+			assert.Equal(test, data.want, got)
+			data.wantErr(test, err)
 		})
 	}
 }
