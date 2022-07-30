@@ -19,7 +19,8 @@ func (phrase Phrase) ExpandText(variables map[string]string) string {
 }
 
 func (phrase Phrase) SpinText() (string, error) {
-	spunText, err := gospin.New(nil).Spin(phrase.Text)
+	spunText, err :=
+		gospin.New(&gospin.Config{UseGlobalRand: true}).Spin(phrase.Text)
 	if err != nil {
 		return "", fmt.Errorf("unable to process the Spintax format: %w", err)
 	}
