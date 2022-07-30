@@ -18,6 +18,15 @@ type Task struct {
 	Phrases         []Phrase
 }
 
+func (task Task) SelectedName() string {
+	name := task.Name
+	if task.UseOriginalName {
+		name = task.OriginalName
+	}
+
+	return name
+}
+
 func (task Task) RandomPhrase() Phrase {
 	return task.Phrases[rand.Intn(len(task.Phrases))]
 }

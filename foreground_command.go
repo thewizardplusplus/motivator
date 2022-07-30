@@ -92,11 +92,9 @@ func (command foregroundCommand) Run() error {
 			}
 
 			// show a notification
-			var taskName string
-			if task.UseOriginalName || config.UseOriginalTaskName {
+			taskName := task.SelectedName()
+			if config.UseOriginalTaskName {
 				taskName = task.OriginalName
-			} else {
-				taskName = task.Name
 			}
 			var titleParts []string
 			if !config.HideAppName {
