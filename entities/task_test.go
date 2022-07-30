@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -48,4 +49,15 @@ func TestTask_SelectedName(test *testing.T) {
 			assert.Equal(test, data.want, got)
 		})
 	}
+}
+
+func TestTask_RandomPhrase(test *testing.T) {
+	rand.Seed(1) // for the reproducibility of the test
+
+	task := Task{
+		Phrases: []Phrase{{Text: "one"}, {Text: "two"}, {Text: "three"}},
+	}
+	got := task.RandomPhrase()
+
+	assert.Equal(test, Phrase{Text: "three"}, got)
 }
