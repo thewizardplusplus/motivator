@@ -1,12 +1,14 @@
 package entities
 
 import (
+	"context"
 	"math/rand"
 	"testing"
 	"time"
 
 	"github.com/go-co-op/gocron"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestTask_SelectedName(test *testing.T) {
@@ -70,7 +72,7 @@ func TestTask_PlanJob(test *testing.T) {
 		Delay string
 	}
 	type args struct {
-		taskHandler func(task Task)
+		taskHandler TaskHandler
 	}
 
 	for _, data := range []struct {
@@ -86,7 +88,7 @@ func TestTask_PlanJob(test *testing.T) {
 				Cron: "0 0 * * * *",
 			},
 			args: args{
-				taskHandler: func(task Task) {},
+				taskHandler: &MockTaskHandler{},
 			},
 			wantNextRun: time.Now().Truncate(time.Hour).Add(time.Hour),
 			wantErr:     assert.NoError,
@@ -97,7 +99,7 @@ func TestTask_PlanJob(test *testing.T) {
 				Cron: "0 * * * *",
 			},
 			args: args{
-				taskHandler: func(task Task) {},
+				taskHandler: &MockTaskHandler{},
 			},
 			wantNextRun: time.Now().Truncate(time.Hour).Add(time.Hour),
 			wantErr:     assert.NoError,
@@ -108,7 +110,7 @@ func TestTask_PlanJob(test *testing.T) {
 				Delay: "1h",
 			},
 			args: args{
-				taskHandler: func(task Task) {},
+				taskHandler: &MockTaskHandler{},
 			},
 			wantNextRun: time.Now().Add(time.Hour),
 			wantErr:     assert.NoError,
@@ -119,7 +121,7 @@ func TestTask_PlanJob(test *testing.T) {
 				Cron: "incorrect",
 			},
 			args: args{
-				taskHandler: func(task Task) {},
+				taskHandler: &MockTaskHandler{},
 			},
 			wantNextRun: time.Time{},
 			wantErr:     assert.Error,
@@ -130,28 +132,60 @@ func TestTask_PlanJob(test *testing.T) {
 				Delay: "incorrect",
 			},
 			args: args{
-				taskHandler: func(task Task) {},
+				taskHandler: &MockTaskHandler{},
 			},
 			wantNextRun: time.Time{},
 			wantErr:     assert.Error,
 		},
 	} {
 		test.Run(data.name, func(test *testing.T) {
-			scheduler := gocron.NewScheduler(time.UTC)
+			// use the `wait for schedule` mode so that jobs are not started immediately
+			scheduler := gocron.NewScheduler(time.UTC).WaitForSchedule()
 			defer scheduler.Stop()
 
 			task := Task{
 				Cron:  data.fields.Cron,
 				Delay: data.fields.Delay,
 			}
-			job, err := task.PlanJob(scheduler, data.args.taskHandler)
+			job, err := task.PlanJob(scheduler, data.args.taskHandler.HandleTask)
 
 			scheduler.StartAsync()
 
+			mock.AssertExpectationsForObjects(test, data.args.taskHandler)
 			if job != nil {
 				assert.WithinDuration(test, data.wantNextRun, job.NextRun(), time.Minute)
 			}
 			data.wantErr(test, err)
 		})
 	}
+}
+
+func TestTask_PlanJob_withRunningJob(test *testing.T) {
+	task := Task{
+		Delay: "1h",
+	}
+
+	taskHandler := &MockTaskHandler{}
+	taskHandler.On("HandleTask", task).Return()
+
+	// use the `start immediately` mode so that jobs are started immediately
+	scheduler := gocron.NewScheduler(time.UTC).StartImmediately()
+	defer scheduler.Stop()
+
+	ctx, ctxCancel := context.WithTimeout(context.Background(), time.Second)
+	job, err := task.PlanJob(scheduler, func(task Task) {
+		defer ctxCancel()
+
+		taskHandler.HandleTask(task)
+	})
+
+	scheduler.StartAsync()
+	<-ctx.Done()
+
+	mock.AssertExpectationsForObjects(test, taskHandler)
+	if job != nil {
+		wantNextRun := time.Now().Add(time.Hour)
+		assert.WithinDuration(test, wantNextRun, job.NextRun(), time.Minute)
+	}
+	assert.NoError(test, err)
 }
