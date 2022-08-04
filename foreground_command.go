@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/gen2brain/beeep"
@@ -65,36 +64,19 @@ func (command foregroundCommand) Run() error {
 		return errors.New("there is not at least one task with phrases in the config")
 	}
 
-	// start a cron scheduler
 	scheduler := gocron.NewScheduler(time.UTC)
 	for _, task := range tasks {
 		if _, err := task.PlanJob(scheduler, func(task entities.Task) {
-			// select a random phrase
 			phrase := task.RandomPhrase()
-
-			// process the Spintax format
 			spunText, err := phrase.SpinText()
 			if err != nil {
 				log.Printf("unable to process the Spintax format: %s", err)
 				return
 			}
 
-			// show a notification
-			taskName := task.SelectedName()
-			if config.UseOriginalTaskName {
-				taskName = task.OriginalName
-			}
-			var titleParts []string
-			if !config.HideAppName {
-				titleParts = append(titleParts, appName)
-			}
-			if taskName != "" {
-				titleParts = append(titleParts, taskName)
-			}
-			title := strings.Join(titleParts, " | ")
+			title := config.Title(appName, task)
 			if err := beeep.Notify(title, spunText, phrase.Icon); err != nil {
-				log.Printf("unable to show a notification: %s", err)
-				return
+				log.Printf("unable to show the notification: %s", err)
 			}
 		}); err != nil {
 			const message = "unable to start the job scheduler for task %q: %s"
