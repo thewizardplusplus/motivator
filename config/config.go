@@ -1,9 +1,12 @@
 package config
 
 import (
+	"errors"
+	"fmt"
 	"path/filepath"
 
 	"github.com/thewizardplusplus/motivator/entities"
+	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type Config struct {
@@ -12,6 +15,22 @@ type Config struct {
 	Icon      string
 	Tasks     []entities.Task
 	Variables map[string]string
+}
+
+func LoadConfig(configPath string, generatedNamePrefix string) (Config, error) {
+	var config Config
+	if err := systemutils.UnmarshalJSONFile(configPath, &config); err != nil {
+		return Config{}, fmt.Errorf("unable to load the config: %w", err)
+	}
+
+	basicIconPath := filepath.Dir(configPath)
+	config.Tasks = config.PrepareTasks(generatedNamePrefix, basicIconPath)
+	if len(config.Tasks) == 0 {
+		const message = "the config does not contain at least one task with phrases"
+		return Config{}, errors.New(message)
+	}
+
+	return config, nil
 }
 
 func (config Config) PrepareTasks(

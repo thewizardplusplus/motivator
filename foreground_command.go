@@ -4,14 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"path/filepath"
 	"time"
 
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
 	"github.com/thewizardplusplus/motivator/config"
 	"github.com/thewizardplusplus/motivator/entities"
-	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type foregroundCommand struct {
@@ -19,23 +17,13 @@ type foregroundCommand struct {
 }
 
 func (command foregroundCommand) Run() error {
-	var config config.Config
-	if err := systemutils.UnmarshalJSONFile(
-		command.ConfigPath,
-		&config,
-	); err != nil {
+	config, err := config.LoadConfig(command.ConfigPath, "Task")
+	if err != nil {
 		return fmt.Errorf("unable to load the config: %w", err)
 	}
 
-	configDirectory := filepath.Dir(command.ConfigPath)
-	tasks := config.PrepareTasks("Task", configDirectory)
-	if len(tasks) == 0 {
-		const message = "the config does not contain at least one task with phrases"
-		return errors.New(message)
-	}
-
 	scheduler := gocron.NewScheduler(time.UTC)
-	for _, task := range tasks {
+	for _, task := range config.Tasks {
 		if _, err := task.PlanJob(scheduler, func(task entities.Task) {
 			phrase := task.RandomPhrase()
 			spunText, err := phrase.SpinText()
