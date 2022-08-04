@@ -46,21 +46,16 @@ func (command foregroundCommand) Run() error {
 		task.OriginalName = task.Name
 		task.Name = taskNameGenerator.GenerateName(taskIndex, task.Name)
 
-		alternativeIconPath := task.Icon
-		if alternativeIconPath == "" {
-			alternativeIconPath = config.Icon
-		}
 		for phraseIndex, phrase := range task.Phrases {
-			iconPath := phrase.Icon
-			if iconPath == "" {
-				iconPath = alternativeIconPath
-			}
+			iconPath := entities.CoalesceStrings(phrase.Icon, task.Icon, config.Icon)
 			if iconPath != "" && !filepath.IsAbs(iconPath) {
 				iconPath = filepath.Join(configDirectory, iconPath)
 			}
-			task.Phrases[phraseIndex].Icon = iconPath
 
-			task.Phrases[phraseIndex].Text = phrase.ExpandText(config.Variables)
+			task.Phrases[phraseIndex] = entities.Phrase{
+				Icon: iconPath,
+				Text: phrase.ExpandText(config.Variables),
+			}
 		}
 
 		tasks = append(tasks, task)
