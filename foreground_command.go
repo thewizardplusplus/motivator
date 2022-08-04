@@ -10,16 +10,17 @@ import (
 
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
+	configpkg "github.com/thewizardplusplus/motivator/config"
 	"github.com/thewizardplusplus/motivator/entities"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type config struct {
-	Icon                string
-	Tasks               []entities.Task
-	Variables           map[string]string
-	HideAppName         bool
-	UseOriginalTaskName bool
+	configpkg.TitleConfig
+
+	Icon      string
+	Tasks     []entities.Task
+	Variables map[string]string
 }
 
 type foregroundCommand struct {
