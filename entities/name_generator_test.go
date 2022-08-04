@@ -11,16 +11,15 @@ func TestNewNameGenerator(test *testing.T) {
 
 	assert.Equal(test, "test", generator.prefix)
 	assert.Equal(test, map[string]int{}, generator.names)
-	assert.Equal(test, 0, generator.counter)
 }
 
 func TestNameGenerator_GenerateName(test *testing.T) {
 	type fields struct {
-		prefix  string
-		names   map[string]int
-		counter int
+		prefix string
+		names  map[string]int
 	}
 	type args struct {
+		nameIndex     int
 		suggestedName string
 	}
 
@@ -34,62 +33,58 @@ func TestNameGenerator_GenerateName(test *testing.T) {
 		{
 			name: "original name",
 			fields: fields{
-				prefix:  "test",
-				names:   map[string]int{},
-				counter: 0,
+				prefix: "test",
+				names:  map[string]int{},
 			},
 			args: args{
+				nameIndex:     23,
 				suggestedName: "name",
 			},
 			want: "name",
 			wantGenerator: &NameGenerator{
-				prefix:  "test",
-				names:   map[string]int{"name": 1},
-				counter: 0,
+				prefix: "test",
+				names:  map[string]int{"name": 1},
 			},
 		},
 		{
 			name: "empty name",
 			fields: fields{
-				prefix:  "test",
-				names:   map[string]int{},
-				counter: 2,
+				prefix: "test",
+				names:  map[string]int{},
 			},
 			args: args{
+				nameIndex:     23,
 				suggestedName: "",
 			},
-			want: "test #2",
+			want: "test #23",
 			wantGenerator: &NameGenerator{
-				prefix:  "test",
-				names:   map[string]int{"test #2": 1},
-				counter: 3,
+				prefix: "test",
+				names:  map[string]int{"test #23": 1},
 			},
 		},
 		{
 			name: "duplicated name",
 			fields: fields{
-				prefix:  "test",
-				names:   map[string]int{"name": 2},
-				counter: 0,
+				prefix: "test",
+				names:  map[string]int{"name": 2},
 			},
 			args: args{
+				nameIndex:     23,
 				suggestedName: "name",
 			},
 			want: "name (3)",
 			wantGenerator: &NameGenerator{
-				prefix:  "test",
-				names:   map[string]int{"name": 3},
-				counter: 0,
+				prefix: "test",
+				names:  map[string]int{"name": 3},
 			},
 		},
 	} {
 		test.Run(data.name, func(test *testing.T) {
 			generator := &NameGenerator{
-				prefix:  data.fields.prefix,
-				names:   data.fields.names,
-				counter: data.fields.counter,
+				prefix: data.fields.prefix,
+				names:  data.fields.names,
 			}
-			got := generator.GenerateName(data.args.suggestedName)
+			got := generator.GenerateName(data.args.nameIndex, data.args.suggestedName)
 
 			assert.Equal(test, data.want, got)
 			assert.Equal(test, data.wantGenerator, generator)

@@ -5,9 +5,8 @@ import (
 )
 
 type NameGenerator struct {
-	prefix  string
-	names   map[string]int
-	counter int
+	prefix string
+	names  map[string]int
 }
 
 func NewNameGenerator(prefix string) *NameGenerator {
@@ -17,11 +16,13 @@ func NewNameGenerator(prefix string) *NameGenerator {
 	}
 }
 
-func (generator *NameGenerator) GenerateName(suggestedName string) string {
+func (generator *NameGenerator) GenerateName(
+	nameIndex int,
+	suggestedName string,
+) string {
 	generatedName := suggestedName
 	if generatedName == "" {
-		generatedName = fmt.Sprintf("%s #%d", generator.prefix, generator.counter)
-		generator.counter++
+		generatedName = fmt.Sprintf("%s #%d", generator.prefix, nameIndex)
 	}
 
 	generator.names[generatedName]++
