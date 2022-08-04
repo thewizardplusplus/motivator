@@ -3,6 +3,7 @@ package entities
 import (
 	"fmt"
 	"math/rand"
+	"path/filepath"
 	"strings"
 
 	"github.com/go-co-op/gocron"
@@ -34,6 +35,27 @@ func (task Task) SelectedName() string {
 	}
 
 	return name
+}
+
+func (task Task) PreparePhrases(
+	defaultIcon string,
+	basicIconPath string,
+	variables map[string]string,
+) []Phrase {
+	var phrases []Phrase
+	for _, phrase := range task.Phrases {
+		iconPath := CoalesceStrings(phrase.Icon, task.Icon, defaultIcon)
+		if iconPath != "" && !filepath.IsAbs(iconPath) {
+			iconPath = filepath.Join(basicIconPath, iconPath)
+		}
+
+		phrases = append(phrases, Phrase{
+			Icon: iconPath,
+			Text: phrase.ExpandText(variables),
+		})
+	}
+
+	return phrases
 }
 
 func (task Task) RandomPhrase() Phrase {

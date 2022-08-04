@@ -47,17 +47,8 @@ func (config Config) PrepareTasks(
 		task.OriginalName = task.Name
 		task.Name = taskNameGenerator.GenerateName(taskIndex, task.Name)
 
-		for phraseIndex, phrase := range task.Phrases {
-			iconPath := entities.CoalesceStrings(phrase.Icon, task.Icon, config.Icon)
-			if iconPath != "" && !filepath.IsAbs(iconPath) {
-				iconPath = filepath.Join(basicIconPath, iconPath)
-			}
-
-			task.Phrases[phraseIndex] = entities.Phrase{
-				Icon: iconPath,
-				Text: phrase.ExpandText(config.Variables),
-			}
-		}
+		task.Phrases =
+			task.PreparePhrases(config.Icon, basicIconPath, config.Variables)
 
 		tasks = append(tasks, task)
 	}
