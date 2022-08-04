@@ -36,7 +36,7 @@ func (command foregroundCommand) Run() error {
 	}
 
 	var tasks []entities.Task
-	taskNames := make(map[string]int)
+	taskNameGenerator := entities.NewNameGenerator("Task")
 	configDirectory := filepath.Dir(command.ConfigPath)
 	for taskIndex, task := range config.Tasks {
 		if len(task.Phrases) == 0 {
@@ -44,15 +44,7 @@ func (command foregroundCommand) Run() error {
 		}
 
 		task.OriginalName = task.Name
-
-		if task.Name == "" {
-			task.Name = fmt.Sprintf("Task #%d", taskIndex+1)
-		}
-
-		taskNames[task.Name]++
-		if count := taskNames[task.Name]; count > 1 {
-			task.Name = fmt.Sprintf("%s #%d", task.Name, count)
-		}
+		task.Name = taskNameGenerator.GenerateName(taskIndex, task.Name)
 
 		alternativeIconPath := task.Icon
 		if alternativeIconPath == "" {
