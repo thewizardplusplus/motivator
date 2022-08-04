@@ -9,25 +9,17 @@ import (
 
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
-	configpkg "github.com/thewizardplusplus/motivator/config"
+	"github.com/thewizardplusplus/motivator/config"
 	"github.com/thewizardplusplus/motivator/entities"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
-
-type config struct {
-	configpkg.TitleConfig
-
-	Icon      string
-	Tasks     []entities.Task
-	Variables map[string]string
-}
 
 type foregroundCommand struct {
 	configurableCommand
 }
 
 func (command foregroundCommand) Run() error {
-	var config config
+	var config config.Config
 	if err := systemutils.UnmarshalJSONFile(
 		command.ConfigPath,
 		&config,
