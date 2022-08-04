@@ -27,33 +27,11 @@ func (command foregroundCommand) Run() error {
 		return fmt.Errorf("unable to load the config: %w", err)
 	}
 
-	var tasks []entities.Task
-	taskNameGenerator := entities.NewNameGenerator("Task")
 	configDirectory := filepath.Dir(command.ConfigPath)
-	for taskIndex, task := range config.Tasks {
-		if len(task.Phrases) == 0 {
-			continue
-		}
-
-		task.OriginalName = task.Name
-		task.Name = taskNameGenerator.GenerateName(taskIndex, task.Name)
-
-		for phraseIndex, phrase := range task.Phrases {
-			iconPath := entities.CoalesceStrings(phrase.Icon, task.Icon, config.Icon)
-			if iconPath != "" && !filepath.IsAbs(iconPath) {
-				iconPath = filepath.Join(configDirectory, iconPath)
-			}
-
-			task.Phrases[phraseIndex] = entities.Phrase{
-				Icon: iconPath,
-				Text: phrase.ExpandText(config.Variables),
-			}
-		}
-
-		tasks = append(tasks, task)
-	}
+	tasks := config.PrepareTasks("Task", configDirectory)
 	if len(tasks) == 0 {
-		return errors.New("there is not at least one task with phrases in the config")
+		const message = "the config does not contain at least one task with phrases"
+		return errors.New(message)
 	}
 
 	scheduler := gocron.NewScheduler(time.UTC)
