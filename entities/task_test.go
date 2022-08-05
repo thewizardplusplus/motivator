@@ -3,6 +3,8 @@ package entities
 import (
 	"context"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -49,6 +51,185 @@ func TestTask_SelectedName(test *testing.T) {
 				UseOriginalName: data.fields.UseOriginalName,
 			}
 			got := task.SelectedName()
+
+			assert.Equal(test, data.want, got)
+		})
+	}
+}
+
+func TestTask_PreparePhrases(test *testing.T) {
+	type fields struct {
+		Icon    string
+		Phrases []Phrase
+	}
+	type args struct {
+		defaultIcon   string
+		basicIconPath string
+		variables     map[string]string
+	}
+
+	for _, data := range []struct {
+		name   string
+		fields fields
+		args   args
+		want   []Phrase
+	}{
+		{
+			name: "without phrases",
+			fields: fields{
+				Phrases: nil,
+			},
+			args: args{
+				defaultIcon:   "default-icon",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: nil,
+		},
+		{
+			name: "with phrases/phrase icons",
+			fields: fields{
+				Icon: "task-icon",
+				Phrases: []Phrase{
+					{Icon: "phrase-icon-1", Text: "Phrase #1"},
+					{Icon: "phrase-icon-2", Text: "Phrase #2"},
+				},
+			},
+			args: args{
+				defaultIcon:   "default-icon",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: []Phrase{
+				{
+					Icon: filepath.Join("basic-icon-path", "phrase-icon-1"),
+					Text: "Phrase #1",
+				},
+				{
+					Icon: filepath.Join("basic-icon-path", "phrase-icon-2"),
+					Text: "Phrase #2",
+				},
+			},
+		},
+		{
+			name: "with phrases/task icons",
+			fields: fields{
+				Icon:    "task-icon",
+				Phrases: []Phrase{{Text: "Phrase #1"}, {Text: "Phrase #2"}},
+			},
+			args: args{
+				defaultIcon:   "default-icon",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: []Phrase{
+				{Icon: filepath.Join("basic-icon-path", "task-icon"), Text: "Phrase #1"},
+				{Icon: filepath.Join("basic-icon-path", "task-icon"), Text: "Phrase #2"},
+			},
+		},
+		{
+			name: "with phrases/default icons",
+			fields: fields{
+				Phrases: []Phrase{{Text: "Phrase #1"}, {Text: "Phrase #2"}},
+			},
+			args: args{
+				defaultIcon:   "default-icon",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: []Phrase{
+				{Icon: filepath.Join("basic-icon-path", "default-icon"), Text: "Phrase #1"},
+				{Icon: filepath.Join("basic-icon-path", "default-icon"), Text: "Phrase #2"},
+			},
+		},
+		{
+			name: "with phrases/without icons",
+			fields: fields{
+				Phrases: []Phrase{{Text: "Phrase #1"}, {Text: "Phrase #2"}},
+			},
+			args: args{
+				defaultIcon:   "",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: []Phrase{{Text: "Phrase #1"}, {Text: "Phrase #2"}},
+		},
+		{
+			name: "with phrases/absolute paths to icons",
+			fields: fields{
+				Icon: "task-icon",
+				Phrases: []Phrase{
+					{Icon: filepath.Join(os.TempDir(), "phrase-icon-1"), Text: "Phrase #1"},
+					{Icon: filepath.Join(os.TempDir(), "phrase-icon-2"), Text: "Phrase #2"},
+				},
+			},
+			args: args{
+				defaultIcon:   "default-icon",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: []Phrase{
+				{Icon: filepath.Join(os.TempDir(), "phrase-icon-1"), Text: "Phrase #1"},
+				{Icon: filepath.Join(os.TempDir(), "phrase-icon-2"), Text: "Phrase #2"},
+			},
+		},
+		{
+			name: "with phrases/with an expansion of phrase text",
+			fields: fields{
+				Icon: "task-icon",
+				Phrases: []Phrase{
+					{Icon: "phrase-icon-1", Text: "Phrase #1 (variable-one: ${VARIABLE_ONE})"},
+					{Icon: "phrase-icon-2", Text: "Phrase #2 (variable-two: ${VARIABLE_TWO})"},
+				},
+			},
+			args: args{
+				defaultIcon:   "default-icon",
+				basicIconPath: "basic-icon-path",
+				variables: map[string]string{
+					"VARIABLE_ONE": "value-one",
+					"VARIABLE_TWO": "value-two",
+				},
+			},
+			want: []Phrase{
+				{
+					Icon: filepath.Join("basic-icon-path", "phrase-icon-1"),
+					Text: "Phrase #1 (variable-one: value-one)",
+				},
+				{
+					Icon: filepath.Join("basic-icon-path", "phrase-icon-2"),
+					Text: "Phrase #2 (variable-two: value-two)",
+				},
+			},
+		},
+	} {
+		test.Run(data.name, func(test *testing.T) {
+			task := Task{
+				Icon:    data.fields.Icon,
+				Phrases: data.fields.Phrases,
+			}
+			got := task.PreparePhrases(
+				data.args.defaultIcon,
+				data.args.basicIconPath,
+				data.args.variables,
+			)
 
 			assert.Equal(test, data.want, got)
 		})
