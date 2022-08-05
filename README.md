@@ -2,6 +2,8 @@
 
 [![GoDoc](https://godoc.org/github.com/thewizardplusplus/motivator?status.svg)](https://godoc.org/github.com/thewizardplusplus/motivator)
 [![Go Report Card](https://goreportcard.com/badge/github.com/thewizardplusplus/motivator)](https://goreportcard.com/report/github.com/thewizardplusplus/motivator)
+[![Build Status](https://app.travis-ci.com/thewizardplusplus/motivator.svg?branch=master)](https://app.travis-ci.com/thewizardplusplus/motivator)
+[![codecov](https://codecov.io/gh/thewizardplusplus/motivator/branch/master/graph/badge.svg)](https://codecov.io/gh/thewizardplusplus/motivator)
 
 The utility for repeatedly displaying notifications in the standard OS way.
 
