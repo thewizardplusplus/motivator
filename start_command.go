@@ -8,16 +8,13 @@ import (
 )
 
 type startCommand struct {
-	executableInfoCommand `kong:"-"`
+	stopCommand
 	configurableCommand
 }
 
 func (command startCommand) Run() error {
-	if err := systemutils.KillBackgroundProcess(
-		command.ExecutableInfo.Name,
-		os.Getpid(),
-	); err != nil {
-		return fmt.Errorf("unable to kill the background process: %w", err)
+	if err := command.stopCommand.Run(); err != nil {
+		return fmt.Errorf("unable to run the `stop` command: %w", err)
 	}
 
 	if err := systemutils.StartBackgroundProcess(
