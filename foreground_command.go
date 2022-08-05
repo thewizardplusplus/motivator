@@ -8,12 +8,13 @@ import (
 
 	"github.com/gen2brain/beeep"
 	"github.com/go-co-op/gocron"
+	cliutils "github.com/thewizardplusplus/motivator/cli-utils"
 	"github.com/thewizardplusplus/motivator/config"
 	"github.com/thewizardplusplus/motivator/entities"
 )
 
 type foregroundCommand struct {
-	executableInfoCommand `kong:"-"`
+	cliutils.ExecutableInfoCommand `kong:"-"`
 	configurableCommand
 }
 

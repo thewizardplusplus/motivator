@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	cliutils "github.com/thewizardplusplus/motivator/cli-utils"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type statusCommand struct {
-	executableInfoCommand `kong:"-"`
+	cliutils.ExecutableInfoCommand `kong:"-"`
 }
 
 func (command statusCommand) Run() error {
