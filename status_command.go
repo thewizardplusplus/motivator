@@ -7,26 +7,24 @@ import (
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
-type statusCommand struct{}
+type statusCommand struct {
+	executableInfoCommand `kong:"-"`
+}
 
 func (command statusCommand) Run() error {
-	executableInfo, err := systemutils.ExecutableOfForegroundProcess()
-	if err != nil {
-		const message = "unable to get the name of the executable " +
-			"of the foreground process: %w"
-		return fmt.Errorf(message, err)
-	}
-
 	backgroundProcess, err :=
-		systemutils.FindBackgroundProcess(executableInfo.Name, os.Getpid())
+		systemutils.FindBackgroundProcess(command.ExecutableInfo.Name, os.Getpid())
 	if err != nil {
 		return fmt.Errorf("unable to find the background process: %w", err)
 	}
 
 	if backgroundProcess != nil {
-		fmt.Printf("%s is running in the background\n", executableInfo.Name)
+		fmt.Printf("%s is running in the background\n", command.ExecutableInfo.Name)
 	} else {
-		fmt.Printf("%s is not running in the background\n", executableInfo.Name)
+		fmt.Printf(
+			"%s is not running in the background\n",
+			command.ExecutableInfo.Name,
+		)
 	}
 
 	return nil

@@ -7,18 +7,13 @@ import (
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
-type stopCommand struct{}
+type stopCommand struct {
+	executableInfoCommand `kong:"-"`
+}
 
 func (command stopCommand) Run() error {
-	executableInfo, err := systemutils.ExecutableOfForegroundProcess()
-	if err != nil {
-		const message = "unable to get the name of the executable " +
-			"of the foreground process: %w"
-		return fmt.Errorf(message, err)
-	}
-
 	if err := systemutils.KillBackgroundProcess(
-		executableInfo.Name,
+		command.ExecutableInfo.Name,
 		os.Getpid(),
 	); err != nil {
 		return fmt.Errorf("unable to kill the background process: %w", err)
