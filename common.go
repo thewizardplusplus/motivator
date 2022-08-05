@@ -1,7 +1,6 @@
 package main
 
 const (
-	appName            = "motivator"
 	markOfShowingStart = "start showing notifications"
 )
 

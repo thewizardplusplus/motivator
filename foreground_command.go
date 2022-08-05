@@ -10,6 +10,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/thewizardplusplus/motivator/config"
 	"github.com/thewizardplusplus/motivator/entities"
+	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type foregroundCommand struct {
@@ -17,6 +18,13 @@ type foregroundCommand struct {
 }
 
 func (command foregroundCommand) Run() error {
+	_, executableName, err := systemutils.ExecutableOfForegroundProcess()
+	if err != nil {
+		const message = "unable to get the name of the executable " +
+			"of the foreground process: %w"
+		return fmt.Errorf(message, err)
+	}
+
 	config, err := config.LoadConfig(command.ConfigPath, "Task")
 	if err != nil {
 		return fmt.Errorf("unable to load the config: %w", err)
@@ -32,7 +40,7 @@ func (command foregroundCommand) Run() error {
 				return
 			}
 
-			title := config.Title(appName, task)
+			title := config.Title(executableName, task)
 			if err := beeep.Notify(title, spunText, phrase.Icon); err != nil {
 				log.Printf("unable to show the notification: %s", err)
 			}
