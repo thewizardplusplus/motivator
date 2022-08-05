@@ -12,8 +12,7 @@ type startCommand struct {
 }
 
 func (command startCommand) Run() error {
-	executablePath, executableName, err :=
-		systemutils.ExecutableOfForegroundProcess()
+	executableInfo, err := systemutils.ExecutableOfForegroundProcess()
 	if err != nil {
 		const message = "unable to get the path and the name of the executable " +
 			"of the foreground process: %w"
@@ -21,14 +20,14 @@ func (command startCommand) Run() error {
 	}
 
 	if err := systemutils.KillBackgroundProcess(
-		executableName,
+		executableInfo.Name,
 		os.Getpid(),
 	); err != nil {
 		return fmt.Errorf("unable to kill the background process: %w", err)
 	}
 
 	if err := systemutils.StartBackgroundProcess(
-		executablePath,
+		executableInfo.Path,
 		[]string{"foreground", "--config", command.ConfigPath},
 		os.Stderr,
 		markOfShowingStart,

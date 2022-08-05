@@ -10,7 +10,7 @@ import (
 type statusCommand struct{}
 
 func (command statusCommand) Run() error {
-	_, executableName, err := systemutils.ExecutableOfForegroundProcess()
+	executableInfo, err := systemutils.ExecutableOfForegroundProcess()
 	if err != nil {
 		const message = "unable to get the name of the executable " +
 			"of the foreground process: %w"
@@ -18,15 +18,15 @@ func (command statusCommand) Run() error {
 	}
 
 	backgroundProcess, err :=
-		systemutils.FindBackgroundProcess(executableName, os.Getpid())
+		systemutils.FindBackgroundProcess(executableInfo.Name, os.Getpid())
 	if err != nil {
 		return fmt.Errorf("unable to find the background process: %w", err)
 	}
 
 	if backgroundProcess != nil {
-		fmt.Printf("%s is running in the background\n", executableName)
+		fmt.Printf("%s is running in the background\n", executableInfo.Name)
 	} else {
-		fmt.Printf("%s is not running in the background\n", executableName)
+		fmt.Printf("%s is not running in the background\n", executableInfo.Name)
 	}
 
 	return nil

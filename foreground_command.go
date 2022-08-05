@@ -18,7 +18,7 @@ type foregroundCommand struct {
 }
 
 func (command foregroundCommand) Run() error {
-	_, executableName, err := systemutils.ExecutableOfForegroundProcess()
+	executableInfo, err := systemutils.ExecutableOfForegroundProcess()
 	if err != nil {
 		const message = "unable to get the name of the executable " +
 			"of the foreground process: %w"
@@ -40,7 +40,7 @@ func (command foregroundCommand) Run() error {
 				return
 			}
 
-			title := config.Title(executableName, task)
+			title := config.Title(executableInfo.Name, task)
 			if err := beeep.Notify(title, spunText, phrase.Icon); err != nil {
 				log.Printf("unable to show the notification: %s", err)
 			}

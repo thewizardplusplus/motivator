@@ -12,20 +12,24 @@ import (
 	ps "github.com/mitchellh/go-ps"
 )
 
-func ExecutableOfForegroundProcess() (
-	executablePath string,
-	executableName string,
-	err error,
-) {
-	executablePath, err = os.Executable()
+type ExecutableInfo struct {
+	Path string
+	Name string
+}
+
+func ExecutableOfForegroundProcess() (ExecutableInfo, error) {
+	executablePath, err := os.Executable()
 	if err != nil {
 		const message = "unable to get the path to the executable " +
 			"of the foreground process: %w"
-		return "", "", fmt.Errorf(message, err)
+		return ExecutableInfo{}, fmt.Errorf(message, err)
 	}
 
-	executableName = filepath.Base(executablePath)
-	return executablePath, executableName, nil
+	executableInfo := ExecutableInfo{
+		Path: executablePath,
+		Name: filepath.Base(executablePath),
+	}
+	return executableInfo, nil
 }
 
 func FindBackgroundProcess(
