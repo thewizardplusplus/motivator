@@ -1,18 +1,17 @@
-package main
+package cliutils
 
 import (
 	"fmt"
 	"os"
 
-	cliutils "github.com/thewizardplusplus/motivator/cli-utils"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
-type stopCommand struct {
-	cliutils.ExecutableInfoCommand `kong:"-"`
+type StopCommand struct {
+	ExecutableInfoCommand `kong:"-"`
 }
 
-func (command stopCommand) Run() error {
+func (command StopCommand) Run() error {
 	if err := systemutils.KillBackgroundProcess(
 		command.ExecutableInfo.Name,
 		os.Getpid(),

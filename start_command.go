@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"os"
 
+	cliutils "github.com/thewizardplusplus/motivator/cli-utils"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
 type startCommand struct {
-	stopCommand
+	cliutils.StopCommand
 	configurableCommand
 }
 
 func (command startCommand) Run() error {
-	if err := command.stopCommand.Run(); err != nil {
+	if err := command.StopCommand.Run(); err != nil {
 		return fmt.Errorf("unable to run the `stop` command: %w", err)
 	}
 
