@@ -4,11 +4,24 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fatih/color"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
+)
+
+var (
+	blueColor  = color.New(color.FgBlue, color.Bold).SprintFunc()
+	greenColor = color.New(color.FgGreen, color.Bold).SprintFunc()
+	redColor   = color.New(color.FgRed, color.Bold).SprintFunc()
 )
 
 type StatusCommand struct {
 	ExecutableInfoCommand `kong:"-"`
+}
+
+// Help implements the `kong.HelpProvider` interface.
+func (command StatusCommand) Help() string {
+	return "This command supports the NO_COLOR environment variable " +
+		"that disables colorful output."
 }
 
 func (command StatusCommand) Run() error {
@@ -20,11 +33,11 @@ func (command StatusCommand) Run() error {
 
 	var status string
 	if backgroundProcess != nil {
-		status = "is running"
+		status = greenColor("is running")
 	} else {
-		status = "is not running"
+		status = redColor("is not running")
 	}
 
-	fmt.Printf("%s status: %s\n", command.ExecutableInfo.Name, status)
+	fmt.Printf("%s status: %s\n", blueColor(command.ExecutableInfo.Name), status)
 	return nil
 }

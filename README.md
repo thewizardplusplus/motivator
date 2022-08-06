@@ -63,6 +63,10 @@ Options:
 - `-h`, `--help` &mdash; show the context-sensitive help;
 - `-c PATH`, `--config PATH` &mdash; the path to a config file (default: `config.json`).
 
+Environment variables:
+
+- `NO_COLOR` &mdash; disable colorful output (applies only to the `status` command).
+
 ## Config
 
 Format of the config in the JSON Schema format: [docs/config.schema.json](docs/config.schema.json).
