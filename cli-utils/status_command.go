@@ -1,18 +1,17 @@
-package main
+package cliutils
 
 import (
 	"fmt"
 	"os"
 
-	cliutils "github.com/thewizardplusplus/motivator/cli-utils"
 	systemutils "github.com/thewizardplusplus/motivator/system-utils"
 )
 
-type statusCommand struct {
-	cliutils.ExecutableInfoCommand `kong:"-"`
+type StatusCommand struct {
+	ExecutableInfoCommand `kong:"-"`
 }
 
-func (command statusCommand) Run() error {
+func (command StatusCommand) Run() error {
 	backgroundProcess, err :=
 		systemutils.FindBackgroundProcess(command.ExecutableInfo.Name, os.Getpid())
 	if err != nil {
