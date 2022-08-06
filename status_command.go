@@ -19,14 +19,13 @@ func (command statusCommand) Run() error {
 		return fmt.Errorf("unable to find the background process: %w", err)
 	}
 
+	var status string
 	if backgroundProcess != nil {
-		fmt.Printf("%s is running in the background\n", command.ExecutableInfo.Name)
+		status = "is running"
 	} else {
-		fmt.Printf(
-			"%s is not running in the background\n",
-			command.ExecutableInfo.Name,
-		)
+		status = "is not running"
 	}
 
+	fmt.Printf("%s status: %s\n", command.ExecutableInfo.Name, status)
 	return nil
 }
