@@ -1,9 +1,7 @@
 package main
 
-const (
-	markOfShowingStart = "start showing notifications"
-)
+const notificationDisplayStartMark = "start displaying notifications"
 
 type configurableCommand struct {
-	ConfigPath string `kong:"required,short='c',name='config',default='config.json',help='Config path.'"` // nolint: lll
+	ConfigPath string `kong:"required,short='c',name='config',default='config.json',help='The path to a config file.'"` // nolint: lll
 }

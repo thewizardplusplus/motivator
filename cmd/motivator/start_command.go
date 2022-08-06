@@ -15,6 +15,6 @@ func (command startCommandWrapper) Run() error {
 	return command.StartCommand.Run(
 		[]string{"foreground", "--config", command.ConfigPath},
 		os.Stderr,
-		markOfShowingStart,
+		notificationDisplayStartMark,
 	)
 }

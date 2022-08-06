@@ -47,7 +47,7 @@ func (command foregroundCommand) Run() error {
 		return errors.New("unable to start the job scheduler for at least one task")
 	}
 
-	log.Print(markOfShowingStart)
+	log.Print(notificationDisplayStartMark)
 	scheduler.StartBlocking()
 
 	return nil
